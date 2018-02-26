@@ -27,7 +27,7 @@
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CLRSupport>false</CLRSupport>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
@@ -124,7 +124,6 @@
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <OpenMPSupport>true</OpenMPSupport>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -203,7 +202,7 @@
       <PerformDeviceLink>false</PerformDeviceLink>
     </CudaLink>
     <PostBuildEvent>
-      <Command>7z\7za.exe a dist\ccminer-$(PlatformShortName).7z api\ .\$(Configuration)\$(PlatformShortName)\$(AssemblyName)-$(PlatformShortName).exe ccminer.conf README.txt "$(VCInstallDir)redist\$(PlatformShortName)\Microsoft.VC140.CRT\msvcp140.dll"
+      <Command>7z\7za.exe a dist\ccminer-$(PlatformShortName).7z api\ .\$(Configuration)\$(PlatformShortName)\$(AssemblyName)-$(PlatformShortName).exe ccminer.conf README.txt "$(VCInstallDir)redist\$(PlatformShortName)\Microsoft.VC120.CRT\msvcp120.dll"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -213,7 +212,6 @@
       <Optimization>Full</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <OpenMPSupport>true</OpenMPSupport>
       <CompileAsManaged>false</CompileAsManaged>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -258,7 +256,7 @@
       <GPUDebugInfo>false</GPUDebugInfo>
     </CudaLink>
     <PostBuildEvent>
-      <Command>7z\7za.exe a dist\ccminer-$(PlatformShortName).7z api\ .\$(Configuration)\$(PlatformShortName)\$(AssemblyName)-$(PlatformShortName).exe ccminer.conf README.txt "$(VCInstallDir)redist\$(PlatformShortName)\Microsoft.VC140.CRT\msvcp140.dll"</Command>
+      <Command>7z\7za.exe a dist\ccminer-$(PlatformShortName).7z api\ .\$(Configuration)\$(PlatformShortName)\$(AssemblyName)-$(PlatformShortName).exe ccminer.conf README.txt "$(VCInstallDir)redist\$(PlatformShortName)\Microsoft.VC120.CRT\msvcp120.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
