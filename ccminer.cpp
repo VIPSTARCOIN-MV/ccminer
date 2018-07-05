@@ -273,6 +273,7 @@ Options:\n\
 			quark       Quark\n\
 			qubit       Qubit\n\
 			htmlcoin    SHA256d (htmlcoin)\n\
+			vipstar     SHA256d (VIPSTARCOIN)\n\
 			sha256d     SHA256d (bitcoin)\n\
 			sha256t     SHA256 x3\n\
 			sia         SIA (Blake2B)\n\
@@ -705,6 +706,7 @@ static bool work_decode(const json_t *val, struct work *work)
 	case ALGO_WILDKECCAK:
 		return rpc2_job_decode(val, work);
 	case ALGO_HTML:
+	case ALGO_VIPSTAR:
 		data_size = 192;
 		adata_sz = data_size / 4;
         work->data_len = 181;
@@ -958,6 +960,7 @@ static bool submit_upstream_work(CURL *curl, struct work *work)
 		case ALGO_BLAKE2S:
 		case ALGO_BMW:
 		case ALGO_HTML:
+		case ALGO_VIPSTAR:
 		case ALGO_SHA256D:
 		case ALGO_SHA256T:
 		case ALGO_VANILLA:
@@ -1074,7 +1077,7 @@ static bool submit_upstream_work(CURL *curl, struct work *work)
 		else if (opt_algo == ALGO_SIA) {
 			return sia_submit(curl, pool, work);
 		}
-		else if (opt_algo == ALGO_HTML) {
+		else if (opt_algo == ALGO_HTML || opt_algo == ALGO_VIPSTAR) {
 			data_size = 192; adata_sz = data_size / 4;
 		}
 
@@ -1175,7 +1178,7 @@ static bool get_blocktemplate(CURL *curl, struct work *work)
 		return false;
 
 	int curl_err = 0;
-	if (opt_algo == ALGO_HTML)
+	if (opt_algo == ALGO_HTML || opt_algo == ALGO_VIPSTAR)
 		val = json_rpc_call_pool(curl, pool, gbt_html_req, false, false, &curl_err);
 	else
 		val = json_rpc_call_pool(curl, pool, gbt_req, false, false, &curl_err);
@@ -1662,6 +1665,28 @@ static bool stratum_gen_work(struct stratum_ctx *sctx, struct work *work)
 		memcpy(&work->data[12], sctx->job.coinbase, 32); // merkle_root
 		work->data[20] = 0x80000000;
 		if (opt_debug) applog_hex(work->data, 80);
+	} else if (opt_algo == ALGO_HTML || opt_algo == ALGO_VIPSTAR) {
+		for (i = 0; i < 8; i++)
+			work->data[9 + i] = be32dec((uint32_t *)merkle_root + i);
+		work->data[17] = le32dec(sctx->job.ntime);
+		work->data[18] = le32dec(sctx->job.nbits);
+		for (i = 0; i < 8; i++)
+			work->data[20 + i] = le32dec((uint32_t *)sctx->job.hashstateroot + i);
+		for (i = 0; i < 8; i++)
+			work->data[28 + i] = le32dec((uint32_t *)sctx->job.hashutxoroot + i);
+		work->data[36] = 0x00000000;
+		work->data[37] = 0x00000000;
+		work->data[38] = 0x00000000;
+		work->data[39] = 0x00000000;
+		work->data[40] = 0x00000000;
+		work->data[41] = 0x00000000;
+		work->data[42] = 0x00000000;
+		work->data[43] = 0x00000000;
+		work->data[44] = 0xffffffff;
+		work->data[45] = 0x00000000;
+		work->data[46] = 0x00000000;
+		work->data[47] = 0x00000000;
+		if (opt_debug) applog_hex(work->data, 181);
 	} else {
 		for (i = 0; i < 8; i++)
 			work->data[9 + i] = be32dec((uint32_t *)merkle_root + i);
@@ -2238,6 +2263,7 @@ static void *miner_thread(void *userdata)
 			case ALGO_BMW:
 			case ALGO_DECRED:
 			case ALGO_HTML:
+			case ALGO_VIPSTAR:
 			case ALGO_SHA256D:
 			case ALGO_SHA256T:
 			//case ALGO_WHIRLPOOLX:
@@ -2469,6 +2495,7 @@ static void *miner_thread(void *userdata)
 			rc = scanhash_skunk(thr_id, &work, max_nonce, &hashes_done);
 			break;
 		case ALGO_HTML:
+		case ALGO_VIPSTAR:
             rc = scanhash_sha256d_html(thr_id, &work, max_nonce, &hashes_done);
             break;
 		case ALGO_SHA256D:

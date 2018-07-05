@@ -662,6 +662,8 @@ struct stratum_job {
 	unsigned char version[4];
 	unsigned char nbits[4];
 	unsigned char ntime[4];
+	unsigned char hashstateroot[32];
+	unsigned char hashutxoroot[32];
 	unsigned char claim[32]; // lbry
 	bool clean;
 	unsigned char nreward[2];

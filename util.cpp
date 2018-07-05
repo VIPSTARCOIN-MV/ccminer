@@ -158,8 +158,8 @@ extern int gpu_threads;
 // Also, auto hide LOG_DEBUG if --debug (-D) is not used
 void gpulog(int prio, int thr_id, const char *fmt, ...)
 {
-	char _ALIGN(128) pfmt[128];
-	char _ALIGN(128) line[256];
+	char _ALIGN(128) pfmt[256];
+	char _ALIGN(128) line[512];
 	int len, dev_id = device_map[thr_id % MAX_GPUS];
 	va_list ap;
 
@@ -167,9 +167,9 @@ void gpulog(int prio, int thr_id, const char *fmt, ...)
 		return;
 
 	if (gpu_threads > 1)
-		len = snprintf(pfmt, 128, "GPU T%d: %s", thr_id, fmt);
+		len = snprintf(pfmt, 256, "GPU T%d: %s", thr_id, fmt);
 	else
-		len = snprintf(pfmt, 128, "GPU #%d: %s", dev_id, fmt);
+		len = snprintf(pfmt, 256, "GPU #%d: %s", dev_id, fmt);
 	pfmt[sizeof(pfmt) - 1] = '\0';
 
 	va_start(ap, fmt);
@@ -1445,6 +1445,7 @@ static uint32_t getblocheight(struct stratum_ctx *sctx)
 static bool stratum_notify(struct stratum_ctx *sctx, json_t *params)
 {
 	const char *job_id, *prevhash, *coinb1, *coinb2, *version, *nbits, *stime;
+	const char *hashstateroot, *hashutxoroot;
 	const char *claim = NULL, *nreward = NULL;
 	size_t coinb1_size, coinb2_size;
 	bool clean, ret = false;
@@ -1479,6 +1480,10 @@ static bool stratum_notify(struct stratum_ctx *sctx, json_t *params)
 	version = json_string_value(json_array_get(params, p++));
 	nbits = json_string_value(json_array_get(params, p++));
 	stime = json_string_value(json_array_get(params, p++));
+	if (!strcasecmp(algo, "html") || !strcasecmp(algo, "vipstar")) {
+		hashstateroot = json_string_value(json_array_get(params, p++));
+		hashutxoroot = json_string_value(json_array_get(params, p++));
+	}
 	clean = json_is_true(json_array_get(params, p)); p++;
 	nreward = json_string_value(json_array_get(params, p++));
 
@@ -1545,6 +1550,10 @@ static bool stratum_notify(struct stratum_ctx *sctx, json_t *params)
 	hex2bin(sctx->job.version, version, 4);
 	hex2bin(sctx->job.nbits, nbits, 4);
 	hex2bin(sctx->job.ntime, stime, 4);
+	if (!strcasecmp(algo, "html") || !strcasecmp(algo, "vipstar")) {
+		hex2bin(sctx->job.hashstateroot, hashstateroot, 32);
+		hex2bin(sctx->job.hashutxoroot, hashutxoroot, 32);
+	}
 	if (nreward != NULL)
 	{
 		if (strlen(nreward) == 4)

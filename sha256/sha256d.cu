@@ -61,7 +61,7 @@ extern "C" int scanhash_sha256d_html(int thr_id, struct work* work, uint32_t max
 	for (int k=0; k < 48; k++) // 36
 		be32enc(&endiandata[k], pdata[k]);
 
-	//gpulog(LOG_INFO, thr_id, "work %s", bin2hex((unsigned char*)endiandata, 181));
+	if (opt_debug) gpulog(LOG_INFO, thr_id, "work %s", bin2hex((unsigned char*)endiandata, 181));
 
 	sha256d_setBlock_cuda(endiandata, ptarget, 181);
 

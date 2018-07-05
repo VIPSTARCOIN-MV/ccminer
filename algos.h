@@ -45,6 +45,7 @@ enum sha_algos {
 	ALGO_SCRYPT_JANE,
 	ALGO_SHA256D,
 	ALGO_HTML,
+	ALGO_VIPSTAR,
 	ALGO_SHA256T,
 	ALGO_SIA,
 	ALGO_SIB,
@@ -116,6 +117,7 @@ static const char *algo_names[] = {
 	"scrypt-jane",
 	"sha256d",
 	"html",
+	"vipstar",
 	"sha256t",
 	"sia",
 	"sib",
@@ -185,6 +187,8 @@ static inline int algo_to_int(char* arg)
 			i = ALGO_SHA256D;
 		else if (!strcasecmp("htmlcoin", arg))
 			i = ALGO_HTML;
+		else if (!strcasecmp("vipstar", arg))
+			i = ALGO_VIPSTAR;
 		else if (!strcasecmp("sha256", arg))
 			i = ALGO_SHA256D;
 		else if (!strcasecmp("thorsriddle", arg))
