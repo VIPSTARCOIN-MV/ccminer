@@ -104,6 +104,8 @@ extern "C" int scanhash_lyra2v3(int thr_id, struct work* work, uint32_t max_nonc
 	for (int k=0; k < 20; k++)
 		be32enc(&endiandata[k], pdata[k]);
 
+	if (opt_debug) gpulog(LOG_INFO, thr_id, "work %s", bin2hex((unsigned char*)endiandata, 181));
+
 	blake256_cpu_setBlock_80(pdata);
 	bmw256_setTarget(ptarget);
 
