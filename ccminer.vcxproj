@@ -574,6 +574,7 @@
     <CudaCompile Include="lyra2\lyra2RE.cu" />
     <CudaCompile Include="lyra2\cuda_lyra2.cu" />
     <CudaCompile Include="lyra2\lyra2REv2.cu" />
+    <CudaCompile Include="lyra2\lyra2REv3.cu" />
     <CudaCompile Include="lyra2\cuda_lyra2v2.cu" />
     <ClInclude Include="lyra2\cuda_lyra2_sm2.cuh" />
     <ClInclude Include="lyra2\cuda_lyra2v2_sm3.cuh" />
