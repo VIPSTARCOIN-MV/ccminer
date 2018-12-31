@@ -263,6 +263,7 @@ Options:\n\
 			luffa       Joincoin\n\
 			lyra2       CryptoCoin\n\
 			lyra2v2     VertCoin\n\
+			lyra2v3     VIPSTARCOIN-MV\n\
 			lyra2z      ZeroCoin (3rd impl)\n\
 			myr-gr      Myriad-Groestl\n\
 			neoscrypt   FeatherCoin, Phoenix, UFO...\n\
@@ -707,6 +708,7 @@ static bool work_decode(const json_t *val, struct work *work)
 		return rpc2_job_decode(val, work);
 	case ALGO_HTML:
 	case ALGO_VIPSTAR:
+	case ALGO_LYRA2v3:
 		data_size = 192;
 		adata_sz = data_size / 4;
         work->data_len = 181;
@@ -961,6 +963,7 @@ static bool submit_upstream_work(CURL *curl, struct work *work)
 		case ALGO_BMW:
 		case ALGO_HTML:
 		case ALGO_VIPSTAR:
+		case ALGO_LYRA2v3:
 		case ALGO_SHA256D:
 		case ALGO_SHA256T:
 		case ALGO_VANILLA:
@@ -1077,7 +1080,7 @@ static bool submit_upstream_work(CURL *curl, struct work *work)
 		else if (opt_algo == ALGO_SIA) {
 			return sia_submit(curl, pool, work);
 		}
-		else if (opt_algo == ALGO_HTML || opt_algo == ALGO_VIPSTAR) {
+		else if (opt_algo == ALGO_HTML || opt_algo == ALGO_VIPSTAR || opt_algo == ALGO_LYRA2v3) {
 			data_size = 192; adata_sz = data_size / 4;
 		}
 
@@ -1178,7 +1181,7 @@ static bool get_blocktemplate(CURL *curl, struct work *work)
 		return false;
 
 	int curl_err = 0;
-	if (opt_algo == ALGO_HTML || opt_algo == ALGO_VIPSTAR)
+	if (opt_algo == ALGO_HTML || opt_algo == ALGO_VIPSTAR || opt_algo == ALGO_LYRA2v3)
 		val = json_rpc_call_pool(curl, pool, gbt_html_req, false, false, &curl_err);
 	else
 		val = json_rpc_call_pool(curl, pool, gbt_req, false, false, &curl_err);
@@ -1665,7 +1668,7 @@ static bool stratum_gen_work(struct stratum_ctx *sctx, struct work *work)
 		memcpy(&work->data[12], sctx->job.coinbase, 32); // merkle_root
 		work->data[20] = 0x80000000;
 		if (opt_debug) applog_hex(work->data, 80);
-	} else if (opt_algo == ALGO_HTML || opt_algo == ALGO_VIPSTAR) {
+	} else if (opt_algo == ALGO_HTML || opt_algo == ALGO_VIPSTAR || opt_algo == ALGO_LYRA2v3) {
 		for (i = 0; i < 8; i++)
 			work->data[9 + i] = be32dec((uint32_t *)merkle_root + i);
 		work->data[17] = le32dec(sctx->job.ntime);
@@ -2286,6 +2289,7 @@ static void *miner_thread(void *userdata)
 			case ALGO_JHA:
 			case ALGO_HSR:
 			case ALGO_LYRA2v2:
+			case ALGO_LYRA2v3:
 			case ALGO_PHI:
 			case ALGO_POLYTIMOS:
 			case ALGO_S3:
@@ -2458,6 +2462,9 @@ static void *miner_thread(void *userdata)
 			break;
 		case ALGO_LYRA2v2:
 			rc = scanhash_lyra2v2(thr_id, &work, max_nonce, &hashes_done);
+			break;
+		case ALGO_LYRA2v2:
+			rc = scanhash_lyra2v3(thr_id, &work, max_nonce, &hashes_done);
 			break;
 		case ALGO_LYRA2Z:
 			rc = scanhash_lyra2Z(thr_id, &work, max_nonce, &hashes_done);
