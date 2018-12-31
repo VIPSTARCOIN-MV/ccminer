@@ -2463,7 +2463,7 @@ static void *miner_thread(void *userdata)
 		case ALGO_LYRA2v2:
 			rc = scanhash_lyra2v2(thr_id, &work, max_nonce, &hashes_done);
 			break;
-		case ALGO_LYRA2v2:
+		case ALGO_LYRA2v3:
 			rc = scanhash_lyra2v3(thr_id, &work, max_nonce, &hashes_done);
 			break;
 		case ALGO_LYRA2Z:
