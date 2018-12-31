@@ -916,6 +916,9 @@
     <CudaCompile Include="lyra2\lyra2REv2.cu">
       <Filter>Source Files\CUDA\lyra2</Filter>
     </CudaCompile>
+    <CudaCompile Include="lyra2\lyra2REv3.cu">
+      <Filter>Source Files\CUDA\lyra2</Filter>
+    </CudaCompile>
     <CudaCompile Include="lyra2\cuda_lyra2Z.cu">
       <Filter>Source Files\CUDA\lyra2</Filter>
     </CudaCompile>
