@@ -104,7 +104,7 @@ static const char *algo_names[] = {
 	"luffa",
 	"lyra2",
 	"lyra2v2",
-	"lyra2v3"
+	"lyra2v3",
 	"lyra2z",
 	"mjollnir",
 	"myr-gr",
